@@ -16,7 +16,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 # Path to your local image
-img_path = "C:\\Users\\DELL\\Desktop\\IDS-SEM-PROJ\\steptodown.com601822.jpg"
+img_path = "steptodown.com601822.jpg"
 base64_img = get_base64_of_bin_file(img_path)
 
 # Custom CSS for background image
