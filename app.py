@@ -3,9 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+
 
 # Configure the Streamlit page
 st.set_page_config(
@@ -47,7 +45,7 @@ st.markdown(
         .css-1fcdlhh, .css-1q8dd3e {{
             color: #FFFFFF !important;
         }}
-        table, .dataframe {{
+        table {{
             background-color: black !important;
             color: white !important;
             border: 1px solid white !important;
@@ -90,12 +88,7 @@ if selected_page == "Overview":
 
     st.subheader("Summary Statistics")
     st.write("This section provides descriptive statistics for all numerical features, highlighting central tendencies and variability:")
-    st.markdown(
-        f"""<div style='background-color:black; color:white; padding:10px;'>
-        {data.describe().to_html(classes='dataframe', index=True)}
-        </div>""",
-        unsafe_allow_html=True
-    )
+    st.write(data.describe())
 
     st.subheader("Interactive Data Exploration")
     st.write("Use the filters below to explore subsets of the data:")
@@ -138,12 +131,7 @@ elif selected_page == "Key Insights":
         color_discrete_map={"Survived": "green", "Death": "red"},
         title="Proportion of Death Events"
     )
-    fig.update_layout(
-        title={"text": "Proportion of Death Events", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(50, 50, 50)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Proportion of Death Events", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Age Distribution")
@@ -155,12 +143,7 @@ elif selected_page == "Key Insights":
         labels={"DEATH_EVENT": "Death Event"},
         title="Age Distribution with Death Event"
     )
-    fig.update_layout(
-        title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(60, 60, 60)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Gender-based Death Proportions")
@@ -172,12 +155,7 @@ elif selected_page == "Key Insights":
         labels={"y": "Death Proportion (%)", "x": "Gender"},
         title="Proportion of Death Events by Gender"
     )
-    fig.update_layout(
-       title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(70, 70, 70)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Proportion of Death Events by Gender", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig)
 
     st.subheader("High-risk Features")
@@ -189,12 +167,7 @@ elif selected_page == "Key Insights":
         labels={"DEATH_EVENT": "Death Event"},
         title="Ejection Fraction by Death Event"
     )
-    fig.update_layout(
-        title={"text": "Ejection Fraction by Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(80, 80, 80)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Ejection Fraction by Death Event", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig)
 
     fig = px.violin(
@@ -205,12 +178,7 @@ elif selected_page == "Key Insights":
         labels={"DEATH_EVENT": "Death Event"},
         title="Serum Creatinine by Death Event"
     )
-    fig.update_layout(
-        title={"text": "Serum Creatinine by Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(90, 90, 90)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Serum Creatinine by Death Event", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig)
 
 # Correlation Analysis page
@@ -221,15 +189,63 @@ elif selected_page == "Correlation Analysis":
     corr_matrix = data.corr()
     fig = px.imshow(corr_matrix, text_auto=True, aspect="auto",
                     title="Correlation Matrix of Features")
-    fig.update_layout(
-        title={"text": "Correlation Matrix of Features", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(100, 100, 100)",
-        font_color="white"
-    )
+    fig.update_layout(title={"text": "Correlation Matrix of Features", "x": 0.5, "xanchor": "center"})
     st.plotly_chart(fig)
 
     st.subheader("Top Correlated Features with Death Event")
     death_corr = corr_matrix["DEATH_EVENT"].sort_values(ascending=False)
     st.write(death_corr)
 
+# Survival Analysis page
+elif selected_page == "Survival Analysis":
+    st.title("⏳ Survival Analysis")
+
+    st.subheader("Survival by Ejection Fraction")
+    fig = px.box(data, x="DEATH_EVENT", y="ejection_fraction", color="DEATH_EVENT",
+                 labels={"DEATH_EVENT": "Death Event"},
+                 title="Ejection Fraction and Survival")
+    fig.update_layout(title={"text": "Ejection Fraction and Survival", "x": 0.5, "xanchor": "center"})
+    st.plotly_chart(fig)
+
+    st.subheader("Survival by Serum Creatinine")
+    fig = px.violin(data, x="DEATH_EVENT", y="serum_creatinine", color="DEATH_EVENT",
+                    labels={"DEATH_EVENT": "Death Event"},
+                    title="Serum Creatinine Levels and Survival")
+    fig.update_layout(title={"text": "Serum Creatinine Levels and Survival", "x": 0.5, "xanchor": "center"})
+    st.plotly_chart(fig)
+
+# Model Prediction page
+elif selected_page == "Model Prediction":
+    st.title("🤖 Heart Failure Prediction Model")
+
+    st.subheader("Train a Model")
+    target = "DEATH_EVENT"
+    features = data.drop(columns=["DEATH_EVENT", "sex", "gender"])
+
+    X_train, X_test, y_train, y_test = train_test_split(features, data[target], test_size=0.2, random_state=42)
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_train, y_train)
+
+    st.write("### Classification Report")
+    y_pred = model.predict(X_test)
+    report = classification_report(y_test, y_pred, output_dict=True)
+    st.write(pd.DataFrame(report).transpose())
+
+    st.subheader("Feature Importance")
+    feature_importance = model.feature_importances_
+    importance_df = pd.DataFrame({"Feature": features.columns, "Importance": feature_importance})
+    importance_df = importance_df.sort_values(by="Importance", ascending=False)
+
+    fig = px.bar(importance_df, x="Importance", y="Feature", orientation="h",
+                 title="Feature Importance", labels={"Importance": "Importance Score"})
+    fig.update_layout(title={"text": "Feature Importance", "x": 0.5, "xanchor": "center"})
+    st.plotly_chart(fig)
+
+    st.write("### Make a Prediction")
+    user_inputs = {col: st.number_input(f"Enter {col}", value=float(data[col].mean())) for col in features.columns}
+    prediction = model.predict(np.array(list(user_inputs.values())).reshape(1, -1))[0]
+
+    if prediction == 0:
+        st.success("The model predicts no heart failure risk.")
+    else:
+        st.error("The model predicts a heart failure risk.")
