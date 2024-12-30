@@ -3,9 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+
 
 # Configure the Streamlit page
 st.set_page_config(
@@ -52,6 +50,12 @@ st.markdown(
             color: white !important;
             border: 1px solid white !important;
         }}
+        [data-testid="stSliderTickBarMin"] {{
+            color: white !important;
+        }}
+         [data-testid="stSliderTickBarMax"] {{
+            color: white !important;
+        }}
     </style>
     """,
     unsafe_allow_html=True
@@ -91,7 +95,7 @@ if selected_page == "Overview":
     st.subheader("Summary Statistics")
     st.write("This section provides descriptive statistics for all numerical features, highlighting central tendencies and variability:")
     st.markdown(
-        f"""<div style='background-color:black; color:white; padding:10px;'>
+        f"""<div style='background-color:black; color:white; padding:00px;'>
         {data.describe().to_html(classes='dataframe', index=True)}
         </div>""",
         unsafe_allow_html=True
@@ -127,7 +131,9 @@ elif selected_page == "Key Insights":
 
     filtered_data = data[(data["gender"].isin(gender_filter)) & (data["age"] >= age_range[0]) & (data["age"] <= age_range[1])]
     st.write(f"Filtered data based on selected criteria:")
-    st.markdown(filtered_data.to_markdown(tablefmt="html"), unsafe_allow_html=True)
+    
+    if st.checkbox("Show Filtered Dataset"):
+        st.markdown(filtered_data.to_markdown(tablefmt="html"), unsafe_allow_html=True)
 
     st.subheader("Death Event Proportions")
     death_proportion = filtered_data["DEATH_EVENT"].value_counts(normalize=True) * 100
@@ -139,11 +145,19 @@ elif selected_page == "Key Insights":
         title="Proportion of Death Events"
     )
     fig.update_layout(
-        title={"text": "Proportion of Death Events", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(50, 50, 50)",
-        font_color="white"
-    )
+        title={"text": "Proportion of Death Events", "x": 0.46, "xanchor": "center", "font" :{"color":"white"}},
+        legend = dict(font=dict(color="white")),
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+    xaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ),
+    yaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ))
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Age Distribution")
@@ -156,11 +170,19 @@ elif selected_page == "Key Insights":
         title="Age Distribution with Death Event"
     )
     fig.update_layout(
-        title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(60, 60, 60)",
-        font_color="white"
-    )
+        title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        legend = dict(font=dict(color = "white")),
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+    xaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ),
+    yaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ))
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Gender-based Death Proportions")
@@ -169,14 +191,19 @@ elif selected_page == "Key Insights":
         gender_death,
         x=gender_death.index,
         y=gender_death.values,
-        labels={"y": "Death Proportion (%)", "x": "Gender"},
-        title="Proportion of Death Events by Gender"
+        labels={ "x": "Gender", "y": "Death Proportion (%)"},
+        title="Proportion of Death Events by Gender",
+        color=gender_death.index,
+        color_discrete_map={"Female": "pink", "Male": "green"}
     )
     fig.update_layout(
-       title={"text": "Age Distribution with Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(70, 70, 70)",
-        font_color="white"
+        title={"text": "Proportion of Death Events by Gender", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        legend=dict(font=dict(color="white")),
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+        xaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white")),
+        yaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white"))
     )
     st.plotly_chart(fig)
 
@@ -186,15 +213,23 @@ elif selected_page == "Key Insights":
         x="DEATH_EVENT",
         y="ejection_fraction",
         color="DEATH_EVENT",
-        labels={"DEATH_EVENT": "Death Event"},
+        labels={"DEATH_EVENT": "Death Event", "ejection_fraction":"Ejection Fraction"},
         title="Ejection Fraction by Death Event"
     )
     fig.update_layout(
-        title={"text": "Ejection Fraction by Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(80, 80, 80)",
-        font_color="white"
-    )
+        title={"text": "Ejection Fraction by Death Event", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        legend = dict(font=dict(color = "white")),
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+    xaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ),
+    yaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ))
     st.plotly_chart(fig)
 
     fig = px.violin(
@@ -202,15 +237,23 @@ elif selected_page == "Key Insights":
         x="DEATH_EVENT",
         y="serum_creatinine",
         color="DEATH_EVENT",
-        labels={"DEATH_EVENT": "Death Event"},
+        labels={"DEATH_EVENT": "Death Event", "serum_creatinine":"Serum Creatinine"},
         title="Serum Creatinine by Death Event"
     )
     fig.update_layout(
-        title={"text": "Serum Creatinine by Death Event", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(90, 90, 90)",
-        font_color="white"
-    )
+        title={"text": "Serum Creatinine by Death Event", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        legend = dict(font=dict(color = "white")),
+       paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+    xaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ),
+    yaxis=dict(
+        title_font=dict(color="white"),
+        tickfont=dict(color="white")
+    ))
     st.plotly_chart(fig)
 
 # Correlation Analysis page
@@ -218,7 +261,13 @@ elif selected_page == "Correlation Analysis":
     st.title("🔗 Correlation Analysis")
 
     st.subheader("Correlation Heatmap")
-    corr_matrix = data.corr()
+    st.write("This heatmap shows the correlation coefficients between numerical features, helping identify relationships.")
+
+    # Filter out non-numeric columns
+    numeric_data = data.select_dtypes(include=[np.number])
+
+    # Calculate the correlation matrix
+    corr_matrix = numeric_data.corr()
     fig = px.imshow(corr_matrix, text_auto=True, aspect="auto",
                     title="Correlation Matrix of Features")
     fig.update_layout(
@@ -229,7 +278,24 @@ elif selected_page == "Correlation Analysis":
     )
     st.plotly_chart(fig)
 
-    st.subheader("Top Correlated Features with Death Event")
+    st.subheader("Top Correlated Features with DEATH_EVENT")
     death_corr = corr_matrix["DEATH_EVENT"].sort_values(ascending=False)
     st.write(death_corr)
 
+    st.subheader("Pairwise Feature Correlations")
+    feature_x = st.selectbox("Select Feature X:", options=numeric_data.columns, index=0)
+    feature_y = st.selectbox("Select Feature Y:", options=numeric_data.columns, index=1)
+
+    fig = px.scatter(data, x=feature_x, y=feature_y, color="DEATH_EVENT",
+                     title=f"Scatterplot of {feature_x} vs {feature_y}")
+    fig.update_layout(
+        title={"text": f"Scatterplot of {feature_x} vs {feature_y}", "x": 0.5, "xanchor": "center"},
+        paper_bgcolor="rgb(30, 30, 30)",
+        plot_bgcolor="rgb(100, 100, 100)",
+        font_color="white"
+    )
+    st.plotly_chart(fig)
+
+    st.subheader("Feature Interaction Insights")
+    st.write("This section highlights the most influential features and their interactions with DEATH_EVENT. For instance:")
+    st.markdown("- **Ejection Fraction** is negatively correlated with DEATH_EVENT, suggesting lower ejection")
