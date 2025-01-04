@@ -56,6 +56,8 @@ st.markdown(
          [data-testid="stSliderTickBarMax"] {{
             color: white !important;
         }}
+     
+      
     </style>
     """,
     unsafe_allow_html=True
@@ -263,6 +265,72 @@ elif selected_page == "Correlation Analysis":
     st.subheader("Correlation Heatmap")
     st.write("This heatmap shows the correlation coefficients between numerical features, helping identify relationships.")
 
+    def set_custom_style():
+      
+        st.markdown(
+        """
+        <style>
+        /* Style the selectbox container background */
+        div[data-baseweb="select"] > div {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Style the dropdown list when the selectbox is clicked */
+        ul[role="listbox"] {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Style individual options in the dropdown */
+        li[role="option"] {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Highlight the hovered option */
+        li[role="option"]:hover {
+            background-color: #333333 !important;
+            color: white !important;
+        }
+
+        /* Style the dataframe container and scrollable block */
+        div[data-testid="stDataFrameContainer"] {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Style the entire table content */
+        .stDataFrame table {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Style table headers */
+        .stDataFrame table thead th {
+            background-color: #333333 !important;
+            color: white !important;
+            border-bottom: 1px solid white !important;
+        }
+
+        /* Style table rows */
+        .stDataFrame table tbody tr {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        /* Style hovered rows */
+        .stDataFrame table tbody tr:hover {
+            background-color: #444444 !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Apply the custom style
+    set_custom_style()
+
     # Filter out non-numeric columns
     numeric_data = data.select_dtypes(include=[np.number])
 
@@ -271,16 +339,19 @@ elif selected_page == "Correlation Analysis":
     fig = px.imshow(corr_matrix, text_auto=True, aspect="auto",
                     title="Correlation Matrix of Features")
     fig.update_layout(
-        title={"text": "Correlation Matrix of Features", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(100, 100, 100)",
-        font_color="white"
+        title={"text": "Correlation Matrix of Features", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+         xaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white")),  # X-axis labels color
+        yaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white"))   # Y-axis labels color
     )
     st.plotly_chart(fig)
 
     st.subheader("Top Correlated Features with DEATH_EVENT")
     death_corr = corr_matrix["DEATH_EVENT"].sort_values(ascending=False)
-    st.write(death_corr)
+    death_corr_df = death_corr.to_frame()
+    st.dataframe(death_corr, width=1230, height=400)
 
     st.subheader("Pairwise Feature Correlations")
     feature_x = st.selectbox("Select Feature X:", options=numeric_data.columns, index=0)
@@ -289,13 +360,22 @@ elif selected_page == "Correlation Analysis":
     fig = px.scatter(data, x=feature_x, y=feature_y, color="DEATH_EVENT",
                      title=f"Scatterplot of {feature_x} vs {feature_y}")
     fig.update_layout(
-        title={"text": f"Scatterplot of {feature_x} vs {feature_y}", "x": 0.5, "xanchor": "center"},
-        paper_bgcolor="rgb(30, 30, 30)",
-        plot_bgcolor="rgb(100, 100, 100)",
-        font_color="white"
+        title={"text": f"Scatterplot of {feature_x} vs {feature_y}", "x": 0.5, "xanchor": "center", "font": {"color": "white"}},
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font_color="white",
+        xaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white")),  # X-axis labels color
+        yaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white"))  # Y-axis labels color
+
     )
     st.plotly_chart(fig)
 
     st.subheader("Feature Interaction Insights")
-    st.write("This section highlights the most influential features and their interactions with DEATH_EVENT. For instance:")
-    st.markdown("- **Ejection Fraction** is negatively correlated with DEATH_EVENT, suggesting lower ejection")
+    st.write("This section highlights the most influential features and their interactions with DEATH_EVENT.")
+    st.markdown("- **Ejection Fraction**: Negatively correlated with DEATH_EVENT. Patients with lower ejection fraction percentages are more likely to experience adverse outcomes. This highlights the importance of monitoring heart pump efficiency.")
+    st.markdown("- **Serum Creatinine**: Positively correlated with DEATH_EVENT. Elevated serum creatinine levels indicate potential kidney dysfunction, which is associated with higher mortality risk.")
+    st.markdown("- **Age**: Positively correlated with DEATH_EVENT. Older patients are more prone to severe outcomes, underlining the role of age in predicting health deterioration.")
+    st.markdown("- **Serum Sodium**: Negatively correlated with DEATH_EVENT. Lower sodium levels in the blood are linked to higher mortality, emphasizing the significance of electrolyte balance.")
+    st.markdown("- **Time**: Patients with shorter follow-up times are more likely to have experienced DEATH_EVENT, suggesting the need for early and continuous medical intervention.")
+
+    st.write("Understanding these feature interactions provides actionable insights for clinicians to prioritize critical metrics and improve patient care.")
