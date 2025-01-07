@@ -96,5 +96,5 @@ Contributions are welcome! Please fork the repository and create a pull request 
 ---
 
 ## 🔗 Links  
-- **Kaggle Dataset**: [Kaggle Link](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)  
-- **GitHub Repository**: [Your GitHub Link](https://github.com/haroonaulakh/Heart-Failure-Prediction-.git)
+- **Kaggle Dataset**: [Dataset Link](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)  
+- **GitHub Repository**: [Heart Failure Prediction](https://github.com/haroonaulakh/Heart-Failure-Prediction-.git)
