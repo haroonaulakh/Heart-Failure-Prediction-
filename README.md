@@ -30,7 +30,7 @@ Ensure you have the following installed:
 
 1. **Clone the Repository**:  
    ```bash
-   git clone https://github.com/yourusername/heart-failure-prediction.git
+   git clone https://github.com/haroonaulakh/Heart-Failure-Prediction-.git
    cd heart-failure-prediction
    ```
 
