@@ -16,7 +16,7 @@ An interactive web application for analyzing clinical data, predicting heart fai
   - Highlight influential features such as **Ejection Fraction** and **Serum Creatinine**.  
 
 - **Predictive Modeling**:  
-  - Logistic Regression model with an **accuracy of 87%**.  
+  - Logistic Regression model with an **accuracy of 80%**.  
   - Real-time predictions for new patient data, including probabilities for survival or adverse outcomes.  
 
 ## 🚀 Getting Started  
@@ -63,7 +63,7 @@ The clinical data used for this project is sourced from [Kaggle Heart Failure Da
 The Logistic Regression model predicts heart failure risks with high accuracy.  
 - **Target Variable**: DEATH_EVENT.  
 - **Performance Metrics**:  
-  - Accuracy: **87%**.  
+  - Accuracy: **80%**.  
   - Confusion matrix and classification report available in the app.  
 
 ---
