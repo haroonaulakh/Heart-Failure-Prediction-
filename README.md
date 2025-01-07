@@ -1,83 +1,100 @@
-🫀 Heart Failure Prediction
-An interactive web application for analyzing clinical data, predicting heart failure risks, and gaining actionable insights to improve healthcare outcomes.
+# 🫀 Heart Failure Prediction  
 
-🌟 Features
-Data Exploration:
+An interactive web application for analyzing clinical data, predicting heart failure risks, and gaining actionable insights to improve healthcare outcomes.  
 
-View descriptive statistics and filter datasets based on parameters like age and gender.
-Interactive visualizations using Plotly and Seaborn.
-Survival Analysis:
+## 🌟 Features  
+- **Data Exploration**:  
+  - View descriptive statistics and filter datasets based on parameters like age and gender.  
+  - Interactive visualizations using Plotly and Seaborn.  
 
-Kaplan-Meier survival curves to estimate survival probabilities over time.
-Stratified analysis by demographic factors like gender.
-Correlation Analysis:
+- **Survival Analysis**:  
+  - Kaplan-Meier survival curves to estimate survival probabilities over time.  
+  - Stratified analysis by demographic factors like gender.  
 
-Heatmaps and scatterplots to uncover relationships between clinical parameters.
-Highlight influential features such as Ejection Fraction and Serum Creatinine.
-Predictive Modeling:
+- **Correlation Analysis**:  
+  - Heatmaps and scatterplots to uncover relationships between clinical parameters.  
+  - Highlight influential features such as **Ejection Fraction** and **Serum Creatinine**.  
 
-Logistic Regression model with an accuracy of 87%.
-Real-time predictions for new patient data, including probabilities for survival or adverse outcomes.
-🚀 Getting Started
-Prerequisites
-Ensure you have the following installed:
+- **Predictive Modeling**:  
+  - Logistic Regression model with an **accuracy of 87%**.  
+  - Real-time predictions for new patient data, including probabilities for survival or adverse outcomes.  
 
-Python 3.8 or later
-Required Python libraries (listed in requirements.txt)
-Installation
-Clone the Repository:
+## 🚀 Getting Started  
 
-bash
-Copy code
-git clone https://github.com/yourusername/heart-failure-prediction.git
-cd heart-failure-prediction
-Install Dependencies:
+### Prerequisites  
+Ensure you have the following installed:  
+- Python 3.8 or later  
+- Required Python libraries (listed in `requirements.txt`)  
 
-bash
-Copy code
-pip install -r requirements.txt
-Run the Application:
+### Installation  
 
-bash
-Copy code
-streamlit run Heart_Failure_Prediction.py
-Access the app in your browser at http://localhost:8501.
+1. **Clone the Repository**:  
+   ```bash
+   git clone https://github.com/yourusername/heart-failure-prediction.git
+   cd heart-failure-prediction
+   ```
 
-🧪 Dataset
-The clinical data used for this project is sourced from Kaggle Heart Failure Dataset.
+2. **Install Dependencies**:  
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Key Features in the Dataset:
-Age: Patient's age.
-Ejection Fraction: Percentage of blood leaving the heart during contraction.
-Serum Creatinine: Indicator of kidney function.
-DEATH_EVENT: Binary indicator of survival (1 = death, 0 = survival).
-📊 Machine Learning Model
-The Logistic Regression model predicts heart failure risks with high accuracy.
+3. **Run the Application**:  
+   ```bash
+   streamlit run Heart_Failure_Prediction.py
+   ```
 
-Target Variable: DEATH_EVENT.
-Performance Metrics:
-Accuracy: 87%.
-Confusion matrix and classification report available in the app.
-📈 Visualizations
-The application uses Plotly for interactive charts and Seaborn/Matplotlib for static visualizations. Some highlights:
+4. Access the app in your browser at `http://localhost:8501`.  
 
-Survival Curves: Kaplan-Meier estimates for overall and group-specific survival probabilities.
-Feature Correlation Heatmap: Relationships between numerical features and the target variable.
-💡 Future Enhancements
-Add support for additional machine learning models (e.g., Random Forest, SVM).
-Implement SHAP plots for feature importance analysis.
-Enhance survival analysis with stratifications based on additional clinical features.
-👩‍💻 Technologies Used
-Frontend: Streamlit
-Backend: Python
-Machine Learning: Scikit-learn
-Data Visualization: Plotly, Seaborn, Matplotlib
-🤝 Contributing
-Contributions are welcome! Please fork the repository and create a pull request with your enhancements.
+---
 
-📜 License
-This project is licensed under the MIT License.
+## 🪪 Dataset  
+The clinical data used for this project is sourced from [Kaggle Heart Failure Dataset](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data).  
 
-🔗 Links
-Kaggle Dataset: https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data
-GitHub Repository: https://github.com/haroonaulakh/Heart-Failure-Prediction-.git
+### Key Features in the Dataset:  
+- **Age**: Patient's age.  
+- **Ejection Fraction**: Percentage of blood leaving the heart during contraction.  
+- **Serum Creatinine**: Indicator of kidney function.  
+- **DEATH_EVENT**: Binary indicator of survival (1 = death, 0 = survival).  
+
+---
+
+## 📊 Machine Learning Model  
+The Logistic Regression model predicts heart failure risks with high accuracy.  
+- **Target Variable**: DEATH_EVENT.  
+- **Performance Metrics**:  
+  - Accuracy: **87%**.  
+  - Confusion matrix and classification report available in the app.  
+
+---
+
+## 📈 Visualizations  
+The application uses **Plotly** for interactive charts and **Seaborn/Matplotlib** for static visualizations. Some highlights:  
+- **Survival Curves**: Kaplan-Meier estimates for overall and group-specific survival probabilities.  
+- **Feature Correlation Heatmap**: Relationships between numerical features and the target variable.  
+
+---
+
+## 💡 Future Enhancements  
+- Add support for additional machine learning models (e.g., Random Forest, SVM).  
+- Implement SHAP plots for feature importance analysis.  
+- Enhance survival analysis with stratifications based on additional clinical features.  
+
+---
+
+## 👩‍💻 Technologies Used  
+- **Frontend**: Streamlit  
+- **Backend**: Python  
+- **Machine Learning**: Scikit-learn  
+- **Data Visualization**: Plotly, Seaborn, Matplotlib  
+
+---
+
+## 🤝 Contributing  
+Contributions are welcome! Please fork the repository and create a pull request with your enhancements.  
+
+---
+
+## 🔗 Links  
+- **Kaggle Dataset**: [Kaggle Link](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data)  
+- **GitHub Repository**: [Your GitHub Link](https://github.com/haroonaulakh/Heart-Failure-Prediction-.git)
