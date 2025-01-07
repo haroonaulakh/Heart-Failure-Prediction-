@@ -3,6 +3,15 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+from lifelines import KaplanMeierFitter
+from lifelines.plotting import add_at_risk_counts
+# for logistic regression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 # Configure the Streamlit page
@@ -56,7 +65,7 @@ st.markdown(
          [data-testid="stSliderTickBarMax"] {{
             color: white !important;
         }}
-     
+       
       
     </style>
     """,
@@ -379,3 +388,196 @@ elif selected_page == "Correlation Analysis":
     st.markdown("- **Time**: Patients with shorter follow-up times are more likely to have experienced DEATH_EVENT, suggesting the need for early and continuous medical intervention.")
 
     st.write("Understanding these feature interactions provides actionable insights for clinicians to prioritize critical metrics and improve patient care.")
+
+# ---------------------------------------------------------------------------------------------------------------------------------------
+elif selected_page == "Survival Analysis":
+    st.title("🕒 Survival Analysis")
+
+    st.header("Introduction")
+    st.write("Survival analysis is a statistical method used to study the time until an event of interest occurs. In healthcare, it is particularly valuable for analyzing outcomes like patient mortality, as it considers both the timing of the event and the possibility of incomplete observations (e.g., patients who were lost to follow-up).")
+    st.write("In this app, we focus on predicting the time to DEATH_EVENT (1 = death, 0 = survival) for patients with heart failure. The dataset includes a time-related variable, time, which represents the number of days each patient was observed. Using survival analysis, we can explore patterns in survival probabilities and identify factors that influence patient outcomes over time. This insight is crucial for optimizing treatment strategies and improving care for at-risk patients.")
+
+    # Define Kaplan-Meier model
+    kmf = KaplanMeierFitter()
+    st.subheader("Kaplan-Meier Survival Curve")
+    st.write("The Kaplan-Meier Suvival Curve provides an estimate of survival probablities over time."
+        "It is a crucial tool for understanding how long patients survive after diagnosis or treatment.")
+
+    
+    # Median survival time and survival curve
+    survival_col = "time"  # Column representing time
+    event_col = "DEATH_EVENT"  # Column representing the event (1 = death, 0 = survival)
+
+    # Fit the Kaplan-Meier model for the entire dataset
+    kmf.fit(data[survival_col], event_observed=data[event_col])
+    fig = go.Figure()
+    
+    # Add the survival curve
+    fig.add_trace(
+        go.Scatter(
+            x=kmf.survival_function_.index,
+            y=kmf.survival_function_["KM_estimate"],
+            mode="lines",
+            name="Overall Survival",
+            line=dict(color="red"),
+        )
+    )
+    
+    # Annotate the median survival time
+    median_survival_time = kmf.median_survival_time_
+    fig.add_trace(
+        go.Scatter(
+            x=[median_survival_time],
+            y=[0.5],
+            mode="markers+text",
+            marker=dict(size=10, color="red"),
+            text=f"Median: {median_survival_time} days",
+            textposition="bottom right",
+            showlegend=False,
+        )
+    )
+
+    fig.update_layout(
+        title={
+            "text": "Kaplan-Meier Survival Curve",
+            "x": 0.5,
+            "xanchor": "center",
+            "font": {"color": "white"}  # Set title font color to white
+        },
+        xaxis_title="Time (days)",
+        yaxis_title="Survival Probability",
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",
+        font=dict(color="white"),
+        xaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white")),
+        yaxis=dict(title_font=dict(color="white"), tickfont=dict(color="white")),
+        legend=dict(font=dict(color="white")),
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+    # Grouped Survival Analysis (e.g., by Gender)
+    st.subheader("Survival by Gender")
+    gender_groups = data["gender"].unique()
+    fig_grouped = go.Figure()
+    
+    for gender in gender_groups:
+        group_data = data[data["gender"] == gender]
+        kmf.fit(group_data[survival_col], event_observed=group_data[event_col])
+        fig_grouped.add_trace(
+            go.Scatter(
+                x=kmf.survival_function_.index,
+                y=kmf.survival_function_["KM_estimate"],
+                mode="lines",
+                name=f"Gender: {gender}",
+                line=dict(width=2),
+            )
+        )
+
+        fig_grouped.update_layout(
+        title={
+            "text": "Kaplan-Meier Survival Curve by Gender",
+            "x": 0.5,
+            "xanchor": "center",
+            "font": {"color": "white"}  # Ensure title font color is white
+        },
+        xaxis={
+            "title": {"text": "Time (days)", "font": {"color": "white"}},  # X-axis title
+            "tickfont": {"color": "white"},  # X-axis tick labels
+            "showgrid": True,  # Show grid lines
+            "gridcolor": "gray"  # Optional: Set gridline color
+        },
+        yaxis={
+            "title": {"text": "Survival Probability", "font": {"color": "white"}},  # Y-axis title
+            "tickfont": {"color": "white"},  # Y-axis tick labels
+            "showgrid": True,  # Show grid lines
+            "gridcolor": "gray"  # Optional: Set gridline color
+        },
+        paper_bgcolor="rgba(0, 0, 0, 0.3)",  # Background color
+        plot_bgcolor="rgba(0, 0, 0, 0.3)",  # Plot area background color
+        font=dict(color="white"),  # Overall font color
+        legend=dict(font=dict(color="white")),  # Legend font color
+    )
+    st.plotly_chart(fig_grouped, use_container_width=True)
+
+    # Summary Statistics
+    st.subheader("Key Insights")
+    st.markdown(f"- **Median Survival Time**: {median_survival_time} days")
+    st.write(
+        "The survival curve above shows the probability of survival over time for the entire dataset, "
+        "as well as stratified by gender. This helps identify high-risk groups."
+    )
+
+    st.subheader("⏸️ Event Censoring")
+    st.markdown("In survival analysis, not all patients experience the event of interest (e.g., death) during the study period."
+            "These patients are considered **censored**, meaning their exact survival time is unknown. Censoring occurs when a patient:")
+    st.markdown("- Survives beyond the observation period.")   
+    st.markdown("- Is lost to follow-up before the event occurs.")    
+    st.markdown("Censoring is a common phenomenon in medical datasets and is critical to account for when analyzing survival probabilities.")
+    st.write("**How Censoring is Handled**")
+    st.write("The Kaplan-Meier Survival Curve accounts for censored data by estimating the survival probability only for the time intervals where complete information is available."
+             "Censored individuals are included in the calculations up until their last recorded time, ensuring that the survival curve is as accurate as possible.")
+    st.write("By properly accounting for censored data, the Kaplan-Meier method provides a robust estimate of survival probabilities, even when the observation period is incomplete for some patients.")     
+    
+# -----------------------------------------------------------------------------------------------------------------------------------
+elif selected_page == "Model Prediction":
+    # ML Model ==> LOGISTIC REGRESSION
+   # Encode categorical variables 
+    X = data.drop(columns=["DEATH_EVENT"])  # Exclude the target variable
+    y = data["DEATH_EVENT"]                # Target variable
+
+    # Convert categorical columns to numeric (e.g., "gender")
+    X = pd.get_dummies(X, columns=["gender"], drop_first=True)  # Ensuring only gender_Male is used as a column
+
+    # Perform train-test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Standardize the features
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    # Train logistic regression model
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+
+    # Evaluate the model
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    class_report = classification_report(y_test, y_pred)
+
+    # Streamlit display
+    st.subheader("Logistic Regression Results")
+    st.write(f"Model Accuracy: {accuracy:.2f}")
+
+    st.subheader("Confusion Matrix")
+    fig, ax = plt.subplots()
+    sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues", xticklabels=["Survived", "Death"], yticklabels=["Survived", "Death"])
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    st.pyplot(fig)
+
+    st.subheader("Classification Report")
+
+    # Display the classification report using Streamlit's built-in code function
+    st.code(class_report, language="plaintext")
+
+    # Make predictions on new data
+    st.subheader("Make Predictions")
+    user_input = {}
+
+    # Update input columns to match the encoded feature names (gender_Male instead of gender)
+    for column in X.columns:
+        if column == "gender_Male":
+            # Directly assign the value for gender_Male based on a predefined assumption (no user input required)
+            user_input[column] = 1  # Assuming Male as the input, modify as per your requirement
+        else:
+            user_input[column] = st.number_input(f"Enter {column}:", value=float(data[column].mean()))
+
+    input_df = pd.DataFrame([user_input])
+    scaled_input = scaler.transform(input_df)
+    prediction = model.predict(scaled_input)[0]
+    prediction_proba = model.predict_proba(scaled_input)[0]
+
+    st.write(f"Predicted Outcome: {'Death' if prediction == 1 else 'Survived'}")
+    st.write(f"Prediction Probability: Death - {prediction_proba[1]:.2f}, Survived - {prediction_proba[0]:.2f}")
